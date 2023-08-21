@@ -28,7 +28,6 @@ go mod vendor
     - usecase: business logic
 - pkg: folder to connect with other package or wrap other library that we want to use
 - Dockerfile
-- .gitlab-ci.yml
 - main.go
 - Makefile
 - README.md
