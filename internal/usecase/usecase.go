@@ -1,18 +1,27 @@
 package usecase
 
-import "github.com/aszanky/gofolderingproject/internal/repository"
+import (
+	"github.com/aszanky/gofolderingproject/internal/repository"
+	"github.com/jmoiron/sqlx"
+)
 
-type Usecase interface {
+type Usecase struct {
+	Payment PaymentDomain
 }
 
-type usecase struct {
-	repository repository.Repository
+type NewUsecaseParam struct {
+	DB *sqlx.DB
 }
 
-func NewUsecase(
-	rep repository.Repository,
-) Usecase {
-	return &usecase{
-		repository: rep,
+func NewService(param NewUsecaseParam) Usecase {
+	repo := repository.NewRepository(repository.NewRepositoryParam{
+		DB: param.DB,
+	})
+	return Usecase{
+		Payment: NewPaymentService(repo.Payment),
 	}
+}
+
+type PaymentDomain interface {
+	IntegrateWithMandiri() (err error)
 }

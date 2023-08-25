@@ -1,20 +1,20 @@
 package repository
 
-import "github.com/jmoiron/sqlx"
+import (
+	"github.com/aszanky/gofolderingproject/internal/repository/payment"
+	"github.com/jmoiron/sqlx"
+)
 
-type Repository interface {
-	// CreateUser(ctx context.Context, username string) (err error)
-	// GetUser(ctx context.Context, username string) (data model.User, err error)
+type Repository struct {
+	Payment payment.Repository
 }
 
-type repository struct {
-	db *sqlx.DB
+type NewRepositoryParam struct {
+	DB *sqlx.DB
 }
 
-func NewRepository(
-	db *sqlx.DB,
-) Repository {
-	return &repository{
-		db: db,
+func NewRepository(param NewRepositoryParam) Repository {
+	return Repository{
+		Payment: payment.NewPaymentRepository(param.DB),
 	}
 }
