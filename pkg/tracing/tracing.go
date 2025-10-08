@@ -1,46 +1,43 @@
 package tracing
 
 import (
-	"fmt"
-	"io"
+	"context"
 
-	"github.com/opentracing/opentracing-go"
-	"github.com/rs/zerolog/log"
-	"github.com/uber/jaeger-client-go"
-	"github.com/uber/jaeger-client-go/config"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.37.0"
 )
 
-const (
-	samplerType  = "const"
-	samplerParam = 1
-)
-
-func Init(serviceName string) (opentracing.Tracer, io.Closer, error) {
-	cfg, err := config.FromEnv()
+// NewTracerProvider membuat dan mengkonfigurasi OTel TracerProvider.
+func NewTracerProvider() (*sdktrace.TracerProvider, error) {
+	exporter, err := otlptracegrpc.New(context.Background(), otlptracegrpc.WithInsecure())
 	if err != nil {
-		log.Error().Msgf("cannot parse Jaeger env vars %v", err)
-		return nil, nil, fmt.Errorf("jaeger init error: %v", err)
+		return nil, err
 	}
 
-	cfg.ServiceName = serviceName
-	cfg.Sampler.Type = samplerType
-	cfg.Sampler.Param = samplerParam
-
-	tracer, closer, err := cfg.NewTracer(config.Logger(jaeger.StdLogger))
+	res, err := resource.Merge(
+		resource.Default(),
+		resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceName("iam-service"), // Nama service yang akan muncul di Jaeger
+		),
+	)
 	if err != nil {
-		log.Error().Msgf("cannot parse Jaeger env vars %v", err)
-		return tracer, closer, fmt.Errorf("jaeger init error: %v", err)
+		return nil, err
 	}
 
-	return tracer, closer, nil
-}
+	// TracerProvider adalah inti dari OTel SDK, yang menangani seluruh siklus hidup trace.
+	tp := sdktrace.NewTracerProvider(
+		sdktrace.WithBatcher(exporter),
+		sdktrace.WithResource(res),
+	)
 
-func GenerateTraceId(span opentracing.Span) string {
-	if span != nil {
-		sc, ok := span.Context().(jaeger.SpanContext)
-		if ok {
-			return sc.TraceID().String()
-		}
-	}
-	return ""
+	otel.SetTracerProvider(tp)
+
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+
+	return tp, nil
 }

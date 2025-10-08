@@ -42,6 +42,7 @@ Notes: SSL configuration (key & certificate) must be saved on the save place. We
 - OpenTracing (Still used open tracing, it is need to be updated to Open Telemetry https://github.com/open-telemetry/opentelemetry-go) - as tracer library
 - Viper (https://github.com/spf13/viper) - part of sf13, library to manage configuration
 - Cobra (https://github.com/spf13/cobra) - part of sf13, used to modern CLI applications
+- pgx (https://github.com/jackc/pgx) - driver for PostgreSQL
 
 ## Integrate with your tools
 
