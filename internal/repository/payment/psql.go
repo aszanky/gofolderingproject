@@ -7,7 +7,7 @@ import (
 
 	"github.com/aszanky/gofolderingproject/internal/model"
 	"github.com/jmoiron/sqlx"
-	"github.com/opentracing/opentracing-go"
+	"go.opentelemetry.io/otel"
 )
 
 type paymentRepository struct {
@@ -23,8 +23,9 @@ func NewPaymentRepository(
 }
 
 func (p *paymentRepository) UpdatePayment(ctx context.Context, username string) (data model.Payment, err error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "Repository_UpdatePayment")
-	defer span.Finish()
+	tracer := otel.Tracer("repository-layer")
+	ctx, span := tracer.Start(ctx, "repository.UpdatePayment")
+	defer span.End()
 
 	//Check if user is already exist
 	_, err = p.db.ExecContext(ctx, queryUpdatePayment, username)
