@@ -1,11 +1,8 @@
 package resthandler
 
 import (
-	"net/http"
-
 	"github.com/aszanky/gofolderingproject/config"
 	"github.com/aszanky/gofolderingproject/internal/usecase"
-	"github.com/gin-gonic/gin"
 )
 
 type handler struct {
@@ -24,12 +21,12 @@ func NewHandler(
 }
 
 // Start HTTP Server
-func (d *handler) Start(address string) error {
-	return d.router.Run(address)
-}
+// func (d *handler) Start(address string) error {
+// 	return d.Run(address)
+// }
 
-func (d *handler) PING(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"data": "PONG",
-	})
-}
+// func (d *handler) PING(c *gin.Context) {
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"data": "PONG",
+// 	})
+// }

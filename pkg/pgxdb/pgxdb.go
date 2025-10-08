@@ -1,7 +1,5 @@
 package pgxdb
 
-package postgres
-
 import (
 	"context"
 	"fmt"

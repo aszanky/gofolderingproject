@@ -47,9 +47,10 @@ func SetupRouter(
 	{
 
 		// Login User
-		v1.POST("/auth/login", handler.Login) // Endpoint Login
+		// v1.POST("/auth/login", handler.Login) // Endpoint Login
+		v1.GET("/users/:id", handler.GetUsers)
 
-		v1.POST("/auth/refresh", handler.Refresh)
+		// v1.POST("/auth/refresh", handler.Refresh)
 
 		// protected routes if you use RBAC to access specific endpoint
 		// protected := v1.Group("/").Use(AuthMiddleware(cfg.JWTSecret))

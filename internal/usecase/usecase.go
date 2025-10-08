@@ -1,27 +1,25 @@
 package usecase
 
 import (
+	"context"
+
+	"github.com/aszanky/gofolderingproject/internal/model"
 	"github.com/aszanky/gofolderingproject/internal/repository"
-	"github.com/jmoiron/sqlx"
 )
 
-type Usecase struct {
-	Payment PaymentDomain
+type Usecase interface {
+	GetUsers(ctx context.Context, id string) (user model.User, err error)
+	IntegrateWithMandiri(ctx context.Context) (err error)
 }
 
-type NewUsecaseParam struct {
-	DB *sqlx.DB
+type usecase struct {
+	repo repository.Repository
 }
 
-func NewService(param NewUsecaseParam) Usecase {
-	repo := repository.NewRepository(repository.NewRepositoryParam{
-		DB: param.DB,
-	})
-	return Usecase{
-		Payment: NewPaymentUsecase(repo.Payment),
+func NewUsecase(
+	repo repository.Repository,
+) Usecase {
+	return &usecase{
+		repo: repo,
 	}
-}
-
-type PaymentDomain interface {
-	IntegrateWithMandiri() (err error)
 }
