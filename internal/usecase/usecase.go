@@ -18,7 +18,7 @@ func NewService(param NewUsecaseParam) Usecase {
 		DB: param.DB,
 	})
 	return Usecase{
-		Payment: NewPaymentService(repo.Payment),
+		Payment: NewPaymentUsecase(repo.Payment),
 	}
 }
 

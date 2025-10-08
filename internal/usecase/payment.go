@@ -4,18 +4,18 @@ import (
 	"github.com/aszanky/gofolderingproject/internal/repository/payment"
 )
 
-type paymentService struct {
+type paymentUsecase struct {
 	paymentRepository payment.Repository
 }
 
-func NewPaymentService(
+func NewPaymentUsecase(
 	paymentRepo payment.Repository,
 ) PaymentDomain {
-	return &paymentService{
+	return &paymentUsecase{
 		paymentRepository: paymentRepo,
 	}
 }
 
-func (p *paymentService) IntegrateWithMandiri() (err error) {
+func (p *paymentUsecase) IntegrateWithMandiri() (err error) {
 	return err
 }
