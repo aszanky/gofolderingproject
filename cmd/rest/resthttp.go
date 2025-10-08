@@ -4,8 +4,6 @@ import (
 	"context"
 	"os"
 
-	"github.com/rs/zerolog/log"
-
 	"github.com/aszanky/gofolderingproject/config"
 	"github.com/aszanky/gofolderingproject/internal/handler/resthandler"
 	"github.com/aszanky/gofolderingproject/internal/repository"
@@ -36,13 +34,15 @@ func ServeREST() error {
 
 	cfg, err := config.Load("./config/.env")
 	if err != nil {
-		log.Fatal().Err(err).Msg("error while starting http server")
+		logger.Error("failed to load config", "error", err)
+		os.Exit(1)
 	}
 
 	//SQLX
 	sqlxDB, err := db.NewDatabase()
 	if err != nil {
-		log.Fatal().Err(err).Msg("error database")
+		logger.Error("failed to connect to database", "error", err)
+		os.Exit(1)
 	}
 	defer sqlxDB.Close()
 
